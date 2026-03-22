@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { toast } from "sonner";
 import { Loader2, Plus, Trash2, Zap, Clock, TrendingUp, Search, Copy, Pencil } from "lucide-react";
 import type { Client } from "./ClientManager";
+import { RuleLogViewer } from "./RuleLogViewer";
 
 type BudgetRule = {
   id: string;
