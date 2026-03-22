@@ -386,7 +386,7 @@ export function BudgetRulesManager({ client }: Props) {
               <Button onClick={saveRule} disabled={saving}>
                 {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : editingRuleId ? "Bijwerken" : "Rule opslaan"}
               </Button>
-              <Button variant="secondary" onClick={() => setShowForm(false)}>
+              <Button variant="secondary" onClick={() => { setShowForm(false); setEditingRuleId(null); resetForm(); }}>
                 Annuleren
               </Button>
             </div>
