@@ -425,6 +425,14 @@ export function BudgetRulesManager({ client }: Props) {
                     <Button
                       variant="ghost"
                       size="icon"
+                      onClick={() => duplicateRule(rule)}
+                      title="Dupliceer rule"
+                    >
+                      <Copy className="h-4 w-4 text-muted-foreground" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="icon"
                       onClick={() => deleteRule(rule.id)}
                     >
                       <Trash2 className="h-4 w-4 text-destructive" />
