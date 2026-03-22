@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
-import { Loader2, Plus, Trash2, Zap, Clock, TrendingUp, Search } from "lucide-react";
+import { Loader2, Plus, Trash2, Zap, Clock, TrendingUp, Search, Copy } from "lucide-react";
 import type { Client } from "./ClientManager";
 
 type BudgetRule = {
@@ -163,6 +163,22 @@ export function BudgetRulesManager({ client }: Props) {
         prev.map((r) => (r.id === rule.id ? { ...r, is_active: !r.is_active } : r))
       );
     }
+  };
+
+  const duplicateRule = (rule: BudgetRule) => {
+    setForm({
+      name: `${rule.name} (kopie)`,
+      target_type: rule.target_type as "campaign" | "adset",
+      target_id: "",
+      condition: rule.condition,
+      threshold: String(rule.threshold),
+      lookback_days: String(rule.lookback_days),
+      action: rule.action,
+      action_value: String(rule.action_value),
+      check_interval_days: String(Math.round(rule.check_interval_minutes / 1440) || 1),
+    });
+    setShowForm(true);
+    toast.info("Rule gedupliceerd — selecteer een nieuwe campagne/ad set");
   };
 
   const deleteRule = async (id: string) => {
@@ -406,6 +422,14 @@ export function BudgetRulesManager({ client }: Props) {
                       checked={rule.is_active}
                       onCheckedChange={() => toggleRule(rule)}
                     />
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => duplicateRule(rule)}
+                      title="Dupliceer rule"
+                    >
+                      <Copy className="h-4 w-4 text-muted-foreground" />
+                    </Button>
                     <Button
                       variant="ghost"
                       size="icon"
