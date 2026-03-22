@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
-import { Loader2, Plus, Trash2, Zap, Clock, TrendingUp, Search } from "lucide-react";
+import { Loader2, Plus, Trash2, Zap, Clock, TrendingUp, Search, Copy } from "lucide-react";
 import type { Client } from "./ClientManager";
 
 type BudgetRule = {
