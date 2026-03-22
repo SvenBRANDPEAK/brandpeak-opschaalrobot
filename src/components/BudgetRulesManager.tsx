@@ -244,11 +244,12 @@ export function BudgetRulesManager({ client }: Props) {
                   </div>
                 ) : (
                   <Select
+                    key={form.target_type}
                     value={form.target_id}
                     onValueChange={(v) => setForm((f) => ({ ...f, target_id: v }))}
                   >
                     <SelectTrigger><SelectValue placeholder="Selecteer..." /></SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="max-h-60">
                       {targetOptions.map((t) => (
                         <SelectItem key={t.id} value={t.id}>{t.name}</SelectItem>
                       ))}
