@@ -367,8 +367,8 @@ export function BudgetRulesManager({ client }: Props) {
             </div>
 
             <div className="flex gap-2">
-              <Button onClick={addRule} disabled={saving}>
-                {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : "Rule opslaan"}
+              <Button onClick={saveRule} disabled={saving}>
+                {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : editingRuleId ? "Bijwerken" : "Rule opslaan"}
               </Button>
               <Button variant="secondary" onClick={() => setShowForm(false)}>
                 Annuleren
