@@ -463,6 +463,14 @@ export function BudgetRulesManager({ client }: Props) {
                     <Button
                       variant="ghost"
                       size="icon"
+                      onClick={() => editRule(rule)}
+                      title="Wijzig rule"
+                    >
+                      <Pencil className="h-4 w-4 text-muted-foreground" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="icon"
                       onClick={() => duplicateRule(rule)}
                       title="Dupliceer rule"
                     >
