@@ -1,6 +1,12 @@
+import { useState } from "react";
 import { MetaBudgetManager } from "@/components/MetaBudgetManager";
+import { ClientManager, type Client } from "@/components/ClientManager";
+import { BudgetRulesManager } from "@/components/BudgetRulesManager";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const Index = () => {
+  const [selectedClient, setSelectedClient] = useState<Client | null>(null);
+
   return (
     <div className="min-h-screen bg-background">
       <header className="border-b border-border bg-card">
@@ -13,13 +19,42 @@ const Index = () => {
             </svg>
           </div>
           <div>
-            <h1 className="text-lg font-semibold text-foreground">Meta Ads Budget Tool</h1>
-            <p className="text-sm text-muted-foreground">Beheer je advertentiebudgetten</p>
+            <h1 className="text-lg font-semibold text-foreground">Meta Ads Manager</h1>
+            <p className="text-sm text-muted-foreground">Budget beheer & automatische regels</p>
           </div>
         </div>
       </header>
       <main className="container mx-auto px-6 py-8">
-        <MetaBudgetManager />
+        <Tabs defaultValue="clients" className="space-y-6">
+          <TabsList className="grid w-full grid-cols-3">
+            <TabsTrigger value="clients">Klanten</TabsTrigger>
+            <TabsTrigger value="rules">Budget Rules</TabsTrigger>
+            <TabsTrigger value="manual">Handmatig</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="clients">
+            <ClientManager
+              onSelectClient={(c) => setSelectedClient(c)}
+              selectedClientId={selectedClient?.id}
+            />
+          </TabsContent>
+
+          <TabsContent value="rules">
+            {selectedClient ? (
+              <BudgetRulesManager client={selectedClient} />
+            ) : (
+              <div className="rounded-lg border border-dashed border-border p-12 text-center">
+                <p className="text-muted-foreground">
+                  Selecteer eerst een klant in het tabblad "Klanten"
+                </p>
+              </div>
+            )}
+          </TabsContent>
+
+          <TabsContent value="manual">
+            <MetaBudgetManager />
+          </TabsContent>
+        </Tabs>
       </main>
     </div>
   );

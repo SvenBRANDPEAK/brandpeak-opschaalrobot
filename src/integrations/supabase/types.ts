@@ -14,7 +14,98 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      budget_rules: {
+        Row: {
+          action: string
+          action_value: number
+          adset_id: string | null
+          campaign_id: string | null
+          check_interval_minutes: number
+          client_id: string
+          condition: string
+          created_at: string
+          id: string
+          is_active: boolean
+          last_checked_at: string | null
+          last_triggered_at: string | null
+          lookback_days: number
+          metric: string
+          name: string
+          target_name: string | null
+          target_type: string
+          threshold: number
+        }
+        Insert: {
+          action?: string
+          action_value?: number
+          adset_id?: string | null
+          campaign_id?: string | null
+          check_interval_minutes?: number
+          client_id: string
+          condition?: string
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          last_checked_at?: string | null
+          last_triggered_at?: string | null
+          lookback_days?: number
+          metric?: string
+          name: string
+          target_name?: string | null
+          target_type?: string
+          threshold: number
+        }
+        Update: {
+          action?: string
+          action_value?: number
+          adset_id?: string | null
+          campaign_id?: string | null
+          check_interval_minutes?: number
+          client_id?: string
+          condition?: string
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          last_checked_at?: string | null
+          last_triggered_at?: string | null
+          lookback_days?: number
+          metric?: string
+          name?: string
+          target_name?: string | null
+          target_type?: string
+          threshold?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "budget_rules_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      clients: {
+        Row: {
+          ad_account_id: string
+          created_at: string
+          id: string
+          name: string
+        }
+        Insert: {
+          ad_account_id: string
+          created_at?: string
+          id?: string
+          name: string
+        }
+        Update: {
+          ad_account_id?: string
+          created_at?: string
+          id?: string
+          name?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
