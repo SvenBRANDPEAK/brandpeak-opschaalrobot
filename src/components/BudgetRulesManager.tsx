@@ -144,7 +144,7 @@ export function BudgetRulesManager({ client }: Props) {
         lookback_days: "7",
         action: "increase",
         action_value: "10",
-        check_interval_minutes: "60",
+        check_interval_days: "1",
       });
       fetchRules();
     }
