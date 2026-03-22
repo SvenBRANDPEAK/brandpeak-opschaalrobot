@@ -165,6 +165,22 @@ export function BudgetRulesManager({ client }: Props) {
     }
   };
 
+  const duplicateRule = (rule: BudgetRule) => {
+    setForm({
+      name: `${rule.name} (kopie)`,
+      target_type: rule.target_type as "campaign" | "adset",
+      target_id: "",
+      condition: rule.condition,
+      threshold: String(rule.threshold),
+      lookback_days: String(rule.lookback_days),
+      action: rule.action,
+      action_value: String(rule.action_value),
+      check_interval_days: String(Math.round(rule.check_interval_minutes / 1440) || 1),
+    });
+    setShowForm(true);
+    toast.info("Rule gedupliceerd — selecteer een nieuwe campagne/ad set");
+  };
+
   const deleteRule = async (id: string) => {
     const { error } = await supabase.from("budget_rules").delete().eq("id", id);
     if (error) {
