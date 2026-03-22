@@ -104,7 +104,7 @@ export function BudgetRulesManager({ client }: Props) {
     fetchTargets();
   }, [client.id]);
 
-  const addRule = async () => {
+  const saveRule = async () => {
     if (!form.name || !form.target_id || !form.threshold) {
       toast.error("Vul alle velden in");
       return;
@@ -113,8 +113,7 @@ export function BudgetRulesManager({ client }: Props) {
     const targetOptions = form.target_type === "campaign" ? campaigns : adsets;
     const target = targetOptions.find((t) => t.id === form.target_id);
 
-    setSaving(true);
-    const { error } = await supabase.from("budget_rules").insert({
+    const ruleData = {
       client_id: client.id,
       name: form.name,
       campaign_id: form.target_type === "campaign" ? form.target_id : null,
@@ -129,26 +128,50 @@ export function BudgetRulesManager({ client }: Props) {
       action_value: parseFloat(form.action_value),
       check_interval_minutes: parseInt(form.check_interval_days) * 1440,
       is_active: true,
-    });
+    };
 
-    if (error) {
-      toast.error("Fout bij toevoegen rule");
+    setSaving(true);
+
+    if (editingRuleId) {
+      const { error } = await supabase
+        .from("budget_rules")
+        .update(ruleData)
+        .eq("id", editingRuleId);
+      if (error) {
+        toast.error("Fout bij bijwerken rule");
+      } else {
+        toast.success("Rule bijgewerkt");
+      }
     } else {
-      toast.success("Rule toegevoegd");
-      setShowForm(false);
-      setForm({
-        name: "",
-        target_type: "campaign",
-        target_id: "",
-        condition: "greater_than",
-        threshold: "",
-        lookback_days: "7",
-        action: "increase",
-        action_value: "10",
-        check_interval_days: "1",
-      });
-      fetchRules();
+      const { error } = await supabase.from("budget_rules").insert(ruleData);
+      if (error) {
+        toast.error("Fout bij toevoegen rule");
+      } else {
+        toast.success("Rule toegevoegd");
+      }
     }
+
+    setShowForm(false);
+    setEditingRuleId(null);
+    resetForm();
+    fetchRules();
+    setSaving(false);
+  };
+
+  const resetForm = () => {
+    setForm({
+      name: "",
+      target_type: "campaign",
+      target_id: "",
+      condition: "greater_than",
+      threshold: "",
+      lookback_days: "7",
+      action: "increase",
+      action_value: "10",
+      check_interval_days: "1",
+    });
+  };
+
     setSaving(false);
   };
 
