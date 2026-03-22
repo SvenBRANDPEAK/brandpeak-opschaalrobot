@@ -106,6 +106,47 @@ export type Database = {
         }
         Relationships: []
       }
+      rule_logs: {
+        Row: {
+          created_at: string
+          id: string
+          message: string | null
+          new_budget: number | null
+          old_budget: number | null
+          roas: number | null
+          rule_id: string
+          status: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          message?: string | null
+          new_budget?: number | null
+          old_budget?: number | null
+          roas?: number | null
+          rule_id: string
+          status: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          message?: string | null
+          new_budget?: number | null
+          old_budget?: number | null
+          roas?: number | null
+          rule_id?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "rule_logs_rule_id_fkey"
+            columns: ["rule_id"]
+            isOneToOne: false
+            referencedRelation: "budget_rules"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
