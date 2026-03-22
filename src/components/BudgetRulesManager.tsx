@@ -56,7 +56,7 @@ export function BudgetRulesManager({ client }: Props) {
     lookback_days: "7",
     action: "increase",
     action_value: "10",
-    check_interval_minutes: "60",
+    check_interval_days: "1",
   });
 
   const fetchRules = async () => {
@@ -126,7 +126,7 @@ export function BudgetRulesManager({ client }: Props) {
       lookback_days: parseInt(form.lookback_days),
       action: form.action,
       action_value: parseFloat(form.action_value),
-      check_interval_minutes: parseInt(form.check_interval_minutes),
+      check_interval_minutes: parseInt(form.check_interval_days) * 1440,
       is_active: true,
     });
 
@@ -144,7 +144,7 @@ export function BudgetRulesManager({ client }: Props) {
         lookback_days: "7",
         action: "increase",
         action_value: "10",
-        check_interval_minutes: "60",
+        check_interval_days: "1",
       });
       fetchRules();
     }
@@ -317,12 +317,13 @@ export function BudgetRulesManager({ client }: Props) {
             </div>
 
             <div className="space-y-1">
-              <Label className="text-xs text-muted-foreground">Check interval (minuten)</Label>
+              <Label className="text-xs text-muted-foreground">Check interval (dagen)</Label>
               <Input
                 type="number"
-                placeholder="60"
-                value={form.check_interval_minutes}
-                onChange={(e) => setForm((f) => ({ ...f, check_interval_minutes: e.target.value }))}
+                min="1"
+                placeholder="1"
+                value={form.check_interval_days}
+                onChange={(e) => setForm((f) => ({ ...f, check_interval_days: e.target.value }))}
               />
             </div>
 
@@ -385,7 +386,7 @@ export function BudgetRulesManager({ client }: Props) {
                     <div className="flex items-center gap-4 text-xs text-muted-foreground">
                       <span className="flex items-center gap-1">
                         <Clock className="h-3 w-3" />
-                        Elke {rule.check_interval_minutes} min
+                        Elke {Math.round(rule.check_interval_minutes / 1440)} dag(en)
                       </span>
                       {rule.last_checked_at && (
                         <span>
