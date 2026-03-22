@@ -126,7 +126,7 @@ export function BudgetRulesManager({ client }: Props) {
       lookback_days: parseInt(form.lookback_days),
       action: form.action,
       action_value: parseFloat(form.action_value),
-      check_interval_minutes: parseInt(form.check_interval_minutes),
+      check_interval_minutes: parseInt(form.check_interval_days) * 1440,
       is_active: true,
     });
 
