@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
-import { Loader2, Plus, Trash2, Zap, Clock, TrendingUp, Search, Copy } from "lucide-react";
+import { Loader2, Plus, Trash2, Zap, Clock, TrendingUp, Search, Copy, Pencil } from "lucide-react";
 import type { Client } from "./ClientManager";
 
 type BudgetRule = {
@@ -45,6 +45,7 @@ export function BudgetRulesManager({ client }: Props) {
   const [loadingTargets, setLoadingTargets] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [editingRuleId, setEditingRuleId] = useState<string | null>(null);
 
   // Form state
   const [form, setForm] = useState({
@@ -103,7 +104,7 @@ export function BudgetRulesManager({ client }: Props) {
     fetchTargets();
   }, [client.id]);
 
-  const addRule = async () => {
+  const saveRule = async () => {
     if (!form.name || !form.target_id || !form.threshold) {
       toast.error("Vul alle velden in");
       return;
@@ -112,8 +113,7 @@ export function BudgetRulesManager({ client }: Props) {
     const targetOptions = form.target_type === "campaign" ? campaigns : adsets;
     const target = targetOptions.find((t) => t.id === form.target_id);
 
-    setSaving(true);
-    const { error } = await supabase.from("budget_rules").insert({
+    const ruleData = {
       client_id: client.id,
       name: form.name,
       campaign_id: form.target_type === "campaign" ? form.target_id : null,
@@ -128,28 +128,50 @@ export function BudgetRulesManager({ client }: Props) {
       action_value: parseFloat(form.action_value),
       check_interval_minutes: parseInt(form.check_interval_days) * 1440,
       is_active: true,
-    });
+    };
 
-    if (error) {
-      toast.error("Fout bij toevoegen rule");
+    setSaving(true);
+
+    if (editingRuleId) {
+      const { error } = await supabase
+        .from("budget_rules")
+        .update(ruleData)
+        .eq("id", editingRuleId);
+      if (error) {
+        toast.error("Fout bij bijwerken rule");
+      } else {
+        toast.success("Rule bijgewerkt");
+      }
     } else {
-      toast.success("Rule toegevoegd");
-      setShowForm(false);
-      setForm({
-        name: "",
-        target_type: "campaign",
-        target_id: "",
-        condition: "greater_than",
-        threshold: "",
-        lookback_days: "7",
-        action: "increase",
-        action_value: "10",
-        check_interval_days: "1",
-      });
-      fetchRules();
+      const { error } = await supabase.from("budget_rules").insert(ruleData);
+      if (error) {
+        toast.error("Fout bij toevoegen rule");
+      } else {
+        toast.success("Rule toegevoegd");
+      }
     }
+
+    setShowForm(false);
+    setEditingRuleId(null);
+    resetForm();
+    fetchRules();
     setSaving(false);
   };
+
+  const resetForm = () => {
+    setForm({
+      name: "",
+      target_type: "campaign",
+      target_id: "",
+      condition: "greater_than",
+      threshold: "",
+      lookback_days: "7",
+      action: "increase",
+      action_value: "10",
+      check_interval_days: "1",
+    });
+  };
+
 
   const toggleRule = async (rule: BudgetRule) => {
     const { error } = await supabase
@@ -179,6 +201,22 @@ export function BudgetRulesManager({ client }: Props) {
     });
     setShowForm(true);
     toast.info("Rule gedupliceerd — selecteer een nieuwe campagne/ad set");
+  };
+
+  const editRule = (rule: BudgetRule) => {
+    setEditingRuleId(rule.id);
+    setForm({
+      name: rule.name,
+      target_type: rule.target_type as "campaign" | "adset",
+      target_id: rule.campaign_id || rule.adset_id || "",
+      condition: rule.condition,
+      threshold: String(rule.threshold),
+      lookback_days: String(rule.lookback_days),
+      action: rule.action,
+      action_value: String(rule.action_value),
+      check_interval_days: String(Math.round(rule.check_interval_minutes / 1440) || 1),
+    });
+    setShowForm(true);
   };
 
   const deleteRule = async (id: string) => {
@@ -222,7 +260,7 @@ export function BudgetRulesManager({ client }: Props) {
       {showForm && (
         <Card className="border-primary/30">
           <CardHeader>
-            <CardTitle className="text-base">Nieuwe Budget Rule</CardTitle>
+            <CardTitle className="text-base">{editingRuleId ? "Rule wijzigen" : "Nieuwe Budget Rule"}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-1">
@@ -345,10 +383,10 @@ export function BudgetRulesManager({ client }: Props) {
             </div>
 
             <div className="flex gap-2">
-              <Button onClick={addRule} disabled={saving}>
-                {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : "Rule opslaan"}
+              <Button onClick={saveRule} disabled={saving}>
+                {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : editingRuleId ? "Bijwerken" : "Rule opslaan"}
               </Button>
-              <Button variant="secondary" onClick={() => setShowForm(false)}>
+              <Button variant="secondary" onClick={() => { setShowForm(false); setEditingRuleId(null); resetForm(); }}>
                 Annuleren
               </Button>
             </div>
@@ -422,6 +460,14 @@ export function BudgetRulesManager({ client }: Props) {
                       checked={rule.is_active}
                       onCheckedChange={() => toggleRule(rule)}
                     />
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => editRule(rule)}
+                      title="Wijzig rule"
+                    >
+                      <Pencil className="h-4 w-4 text-muted-foreground" />
+                    </Button>
                     <Button
                       variant="ghost"
                       size="icon"
