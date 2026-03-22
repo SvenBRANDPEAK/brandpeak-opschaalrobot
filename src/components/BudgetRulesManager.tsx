@@ -172,8 +172,6 @@ export function BudgetRulesManager({ client }: Props) {
     });
   };
 
-    setSaving(false);
-  };
 
   const toggleRule = async (rule: BudgetRule) => {
     const { error } = await supabase
