@@ -486,6 +486,7 @@ export function BudgetRulesManager({ client }: Props) {
                     </Button>
                   </div>
                 </div>
+                <RuleLogViewer ruleId={rule.id} />
               </CardContent>
             </Card>
           ))}
