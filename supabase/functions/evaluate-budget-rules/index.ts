@@ -89,6 +89,12 @@ serve(async (req) => {
             : roas < rule.threshold;
 
         if (!conditionMet) {
+          await supabase.from("rule_logs").insert({
+            rule_id: rule.id,
+            status: "checked",
+            roas,
+            message: `ROAS ${roas.toFixed(2)} voldoet niet aan conditie (${rule.condition === "greater_than" ? ">" : "<"} ${rule.threshold})`,
+          });
           results.push({ rule_id: rule.id, status: "checked", roas, triggered: false });
           continue;
         }
@@ -99,6 +105,12 @@ serve(async (req) => {
         const budgetData = await budgetRes.json();
 
         if (!budgetRes.ok || !budgetData.daily_budget) {
+          await supabase.from("rule_logs").insert({
+            rule_id: rule.id,
+            status: "error",
+            roas,
+            message: "Kon huidig budget niet ophalen",
+          });
           results.push({ rule_id: rule.id, status: "error", error: "Could not fetch current budget" });
           continue;
         }
@@ -129,6 +141,15 @@ serve(async (req) => {
             .update({ last_triggered_at: now.toISOString() })
             .eq("id", rule.id);
 
+          await supabase.from("rule_logs").insert({
+            rule_id: rule.id,
+            status: "triggered",
+            roas,
+            old_budget: currentBudget / 100,
+            new_budget: newBudget / 100,
+            message: `Budget ${rule.action === "increase" ? "verhoogd" : "verlaagd"} van €${(currentBudget / 100).toFixed(2)} naar €${(newBudget / 100).toFixed(2)} (ROAS: ${roas.toFixed(2)})`,
+          });
+
           results.push({
             rule_id: rule.id,
             status: "triggered",
@@ -138,6 +159,12 @@ serve(async (req) => {
             action: rule.action,
           });
         } else {
+          await supabase.from("rule_logs").insert({
+            rule_id: rule.id,
+            status: "error",
+            roas,
+            message: `Meta API fout: ${JSON.stringify(updateData)}`,
+          });
           results.push({ rule_id: rule.id, status: "error", error: updateData });
         }
       } catch (err: any) {
