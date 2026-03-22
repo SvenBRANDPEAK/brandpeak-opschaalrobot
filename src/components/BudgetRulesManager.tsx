@@ -260,7 +260,7 @@ export function BudgetRulesManager({ client }: Props) {
       {showForm && (
         <Card className="border-primary/30">
           <CardHeader>
-            <CardTitle className="text-base">Nieuwe Budget Rule</CardTitle>
+            <CardTitle className="text-base">{editingRuleId ? "Rule wijzigen" : "Nieuwe Budget Rule"}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-1">
