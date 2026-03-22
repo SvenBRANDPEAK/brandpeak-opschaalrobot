@@ -45,6 +45,7 @@ export function BudgetRulesManager({ client }: Props) {
   const [loadingTargets, setLoadingTargets] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [editingRuleId, setEditingRuleId] = useState<string | null>(null);
 
   // Form state
   const [form, setForm] = useState({
