@@ -317,12 +317,13 @@ export function BudgetRulesManager({ client }: Props) {
             </div>
 
             <div className="space-y-1">
-              <Label className="text-xs text-muted-foreground">Check interval (minuten)</Label>
+              <Label className="text-xs text-muted-foreground">Check interval (dagen)</Label>
               <Input
                 type="number"
-                placeholder="60"
-                value={form.check_interval_minutes}
-                onChange={(e) => setForm((f) => ({ ...f, check_interval_minutes: e.target.value }))}
+                min="1"
+                placeholder="1"
+                value={form.check_interval_days}
+                onChange={(e) => setForm((f) => ({ ...f, check_interval_days: e.target.value }))}
               />
             </div>
 
