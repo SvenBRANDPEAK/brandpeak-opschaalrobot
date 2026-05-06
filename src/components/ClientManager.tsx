@@ -29,7 +29,7 @@ export function ClientManager({ onSelectClient, selectedClientId }: Props) {
   const fetchClients = async () => {
     const { data, error } = await supabase.from("clients").select("*").order("name");
     if (error) {
-      toast.error("Fout bij ophalen klanten");
+      toast.error("Failed to fetch clients");
       return;
     }
     setClients(data || []);
@@ -42,7 +42,7 @@ export function ClientManager({ onSelectClient, selectedClientId }: Props) {
 
   const addClient = async () => {
     if (!newName.trim() || !newAccountId.trim()) {
-      toast.error("Vul naam en Ad Account ID in");
+      toast.error("Please enter a name and Ad Account ID");
       return;
     }
     setAdding(true);
@@ -51,9 +51,9 @@ export function ClientManager({ onSelectClient, selectedClientId }: Props) {
       ad_account_id: newAccountId.trim(),
     });
     if (error) {
-      toast.error("Fout bij toevoegen klant");
+      toast.error("Failed to add client");
     } else {
-      toast.success("Klant toegevoegd");
+      toast.success("Client added");
       setNewName("");
       setNewAccountId("");
       fetchClients();
@@ -64,9 +64,9 @@ export function ClientManager({ onSelectClient, selectedClientId }: Props) {
   const deleteClient = async (id: string) => {
     const { error } = await supabase.from("clients").delete().eq("id", id);
     if (error) {
-      toast.error("Fout bij verwijderen klant");
+      toast.error("Failed to delete client");
     } else {
-      toast.success("Klant verwijderd");
+      toast.success("Client deleted");
       fetchClients();
     }
   };
@@ -86,15 +86,15 @@ export function ClientManager({ onSelectClient, selectedClientId }: Props) {
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-base">
             <Plus className="h-4 w-4 text-primary" />
-            Klant toevoegen
+            Add client
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex flex-col gap-3 sm:flex-row">
             <div className="flex-1 space-y-1">
-              <Label className="text-xs text-muted-foreground">Klantnaam</Label>
+              <Label className="text-xs text-muted-foreground">Client name</Label>
               <Input
-                placeholder="Bijv. Acme Inc."
+                placeholder="e.g. Acme Inc."
                 value={newName}
                 onChange={(e) => setNewName(e.target.value)}
               />
@@ -108,7 +108,7 @@ export function ClientManager({ onSelectClient, selectedClientId }: Props) {
               />
             </div>
             <Button onClick={addClient} disabled={adding} className="mt-auto">
-              {adding ? <Loader2 className="h-4 w-4 animate-spin" /> : "Toevoegen"}
+              {adding ? <Loader2 className="h-4 w-4 animate-spin" /> : "Add"}
             </Button>
           </div>
         </CardContent>
@@ -119,7 +119,7 @@ export function ClientManager({ onSelectClient, selectedClientId }: Props) {
         <Card className="border-dashed">
           <CardContent className="flex flex-col items-center justify-center py-12 text-center">
             <Users className="mb-3 h-10 w-10 text-muted-foreground" />
-            <p className="text-muted-foreground">Nog geen klanten toegevoegd</p>
+            <p className="text-muted-foreground">No clients added yet</p>
           </CardContent>
         </Card>
       ) : (

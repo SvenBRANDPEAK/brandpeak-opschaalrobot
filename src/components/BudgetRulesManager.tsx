@@ -67,7 +67,7 @@ export function BudgetRulesManager({ client }: Props) {
       .select("*")
       .eq("client_id", client.id)
       .order("created_at", { ascending: false });
-    if (error) toast.error("Fout bij ophalen rules");
+    if (error) toast.error("Failed to fetch rules");
     setRules(data || []);
     setLoading(false);
   };
@@ -95,7 +95,7 @@ export function BudgetRulesManager({ client }: Props) {
         setAdsets(adsetRes.data.data.map((a: any) => ({ id: a.id, name: a.name })));
       }
     } catch {
-      toast.error("Fout bij ophalen campagnes/ad sets van Meta");
+      toast.error("Failed to fetch campaigns/ad sets from Meta");
     }
     setLoadingTargets(false);
   };
@@ -107,7 +107,7 @@ export function BudgetRulesManager({ client }: Props) {
 
   const saveRule = async () => {
     if (!form.name || !form.target_id || !form.threshold) {
-      toast.error("Vul alle velden in");
+      toast.error("Please fill in all fields");
       return;
     }
 
@@ -139,16 +139,16 @@ export function BudgetRulesManager({ client }: Props) {
         .update(ruleData)
         .eq("id", editingRuleId);
       if (error) {
-        toast.error("Fout bij bijwerken rule");
+        toast.error("Failed to update rule");
       } else {
-        toast.success("Rule bijgewerkt");
+        toast.success("Rule updated");
       }
     } else {
       const { error } = await supabase.from("budget_rules").insert(ruleData);
       if (error) {
-        toast.error("Fout bij toevoegen rule");
+        toast.error("Failed to add rule");
       } else {
-        toast.success("Rule toegevoegd");
+        toast.success("Rule added");
       }
     }
 
@@ -180,7 +180,7 @@ export function BudgetRulesManager({ client }: Props) {
       .update({ is_active: !rule.is_active })
       .eq("id", rule.id);
     if (error) {
-      toast.error("Fout bij bijwerken rule");
+      toast.error("Failed to update rule");
     } else {
       setRules((prev) =>
         prev.map((r) => (r.id === rule.id ? { ...r, is_active: !r.is_active } : r))
@@ -190,7 +190,7 @@ export function BudgetRulesManager({ client }: Props) {
 
   const duplicateRule = (rule: BudgetRule) => {
     setForm({
-      name: `${rule.name} (kopie)`,
+      name: `${rule.name} (copy)`,
       target_type: rule.target_type as "campaign" | "adset",
       target_id: "",
       condition: rule.condition,
@@ -201,7 +201,7 @@ export function BudgetRulesManager({ client }: Props) {
       check_interval_days: String(Math.round(rule.check_interval_minutes / 1440) || 1),
     });
     setShowForm(true);
-    toast.info("Rule gedupliceerd — selecteer een nieuwe campagne/ad set");
+    toast.info("Rule duplicated — please select a new campaign/ad set");
   };
 
   const editRule = (rule: BudgetRule) => {
@@ -223,9 +223,9 @@ export function BudgetRulesManager({ client }: Props) {
   const deleteRule = async (id: string) => {
     const { error } = await supabase.from("budget_rules").delete().eq("id", id);
     if (error) {
-      toast.error("Fout bij verwijderen rule");
+      toast.error("Failed to delete rule");
     } else {
-      toast.success("Rule verwijderd");
+      toast.success("Rule deleted");
       setRules((prev) => prev.filter((r) => r.id !== id));
     }
   };
@@ -233,9 +233,9 @@ export function BudgetRulesManager({ client }: Props) {
   const targetOptions = form.target_type === "campaign" ? campaigns : adsets;
 
   const conditionLabel = (c: string) =>
-    c === "greater_than" ? "hoger dan" : "lager dan";
+    c === "greater_than" ? "greater than" : "less than";
   const actionLabel = (a: string) =>
-    a === "increase" ? "verhogen" : "verlagen";
+    a === "increase" ? "increase" : "decrease";
 
   if (loading) {
     return (
@@ -253,7 +253,7 @@ export function BudgetRulesManager({ client }: Props) {
         </h3>
         <Button onClick={() => setShowForm(!showForm)} size="sm">
           <Plus className="mr-1 h-4 w-4" />
-          Nieuwe Rule
+          New Rule
         </Button>
       </div>
 
@@ -261,13 +261,13 @@ export function BudgetRulesManager({ client }: Props) {
       {showForm && (
         <Card className="border-primary/30">
           <CardHeader>
-            <CardTitle className="text-base">{editingRuleId ? "Rule wijzigen" : "Nieuwe Budget Rule"}</CardTitle>
+            <CardTitle className="text-base">{editingRuleId ? "Edit rule" : "New Budget Rule"}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-1">
-              <Label className="text-xs text-muted-foreground">Rule naam</Label>
+              <Label className="text-xs text-muted-foreground">Rule name</Label>
               <Input
-                placeholder="Bijv. Scale winner campagnes"
+                placeholder="e.g. Scale winning campaigns"
                 value={form.name}
                 onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
               />
@@ -284,14 +284,14 @@ export function BudgetRulesManager({ client }: Props) {
                 >
                   <SelectTrigger><SelectValue /></SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="campaign">Campagne</SelectItem>
+                    <SelectItem value="campaign">Campaign</SelectItem>
                     <SelectItem value="adset">Ad Set</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
               <div className="space-y-1">
                 <Label className="text-xs text-muted-foreground">
-                  {form.target_type === "campaign" ? "Campagne" : "Ad Set"}
+                  {form.target_type === "campaign" ? "Campaign" : "Ad Set"}
                 </Label>
                 {loadingTargets ? (
                   <div className="flex h-10 items-center">
@@ -303,7 +303,7 @@ export function BudgetRulesManager({ client }: Props) {
                     value={form.target_id}
                     onValueChange={(v) => setForm((f) => ({ ...f, target_id: v }))}
                   >
-                    <SelectTrigger><SelectValue placeholder="Selecteer..." /></SelectTrigger>
+                    <SelectTrigger><SelectValue placeholder="Select..." /></SelectTrigger>
                     <SelectContent className="max-h-60">
                       {targetOptions.map((t) => (
                         <SelectItem key={t.id} value={t.id}>{t.name}</SelectItem>
@@ -316,24 +316,24 @@ export function BudgetRulesManager({ client }: Props) {
 
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1">
-                <Label className="text-xs text-muted-foreground">Als ROAS is</Label>
+                <Label className="text-xs text-muted-foreground">If ROAS is</Label>
                 <Select
                   value={form.condition}
                   onValueChange={(v) => setForm((f) => ({ ...f, condition: v }))}
                 >
                   <SelectTrigger><SelectValue /></SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="greater_than">Hoger dan</SelectItem>
-                    <SelectItem value="less_than">Lager dan</SelectItem>
+                    <SelectItem value="greater_than">Greater than</SelectItem>
+                    <SelectItem value="less_than">Less than</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
               <div className="space-y-1">
-                <Label className="text-xs text-muted-foreground">ROAS drempel</Label>
+                <Label className="text-xs text-muted-foreground">ROAS threshold</Label>
                 <Input
                   type="number"
                   step="0.1"
-                  placeholder="Bijv. 3.0"
+                  placeholder="e.g. 3.0"
                   value={form.threshold}
                   onChange={(e) => setForm((f) => ({ ...f, threshold: e.target.value }))}
                 />
@@ -342,7 +342,7 @@ export function BudgetRulesManager({ client }: Props) {
 
             <div className="grid grid-cols-3 gap-3">
               <div className="space-y-1">
-                <Label className="text-xs text-muted-foreground">Afgelopen X dagen</Label>
+                <Label className="text-xs text-muted-foreground">Past X days</Label>
                 <Input
                   type="number"
                   value={form.lookback_days}
@@ -350,20 +350,20 @@ export function BudgetRulesManager({ client }: Props) {
                 />
               </div>
               <div className="space-y-1">
-                <Label className="text-xs text-muted-foreground">Actie</Label>
+                <Label className="text-xs text-muted-foreground">Action</Label>
                 <Select
                   value={form.action}
                   onValueChange={(v) => setForm((f) => ({ ...f, action: v }))}
                 >
                   <SelectTrigger><SelectValue /></SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="increase">Budget verhogen</SelectItem>
-                    <SelectItem value="decrease">Budget verlagen</SelectItem>
+                    <SelectItem value="increase">Increase budget</SelectItem>
+                    <SelectItem value="decrease">Decrease budget</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
               <div className="space-y-1">
-                <Label className="text-xs text-muted-foreground">Met %</Label>
+                <Label className="text-xs text-muted-foreground">By %</Label>
                 <Input
                   type="number"
                   value={form.action_value}
@@ -373,7 +373,7 @@ export function BudgetRulesManager({ client }: Props) {
             </div>
 
             <div className="space-y-1">
-              <Label className="text-xs text-muted-foreground">Check interval (dagen)</Label>
+              <Label className="text-xs text-muted-foreground">Check interval (days)</Label>
               <Input
                 type="number"
                 min="1"
@@ -385,10 +385,10 @@ export function BudgetRulesManager({ client }: Props) {
 
             <div className="flex gap-2">
               <Button onClick={saveRule} disabled={saving}>
-                {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : editingRuleId ? "Bijwerken" : "Rule opslaan"}
+                {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : editingRuleId ? "Update" : "Save rule"}
               </Button>
               <Button variant="secondary" onClick={() => { setShowForm(false); setEditingRuleId(null); resetForm(); }}>
-                Annuleren
+                Cancel
               </Button>
             </div>
           </CardContent>
@@ -401,7 +401,7 @@ export function BudgetRulesManager({ client }: Props) {
           <CardContent className="flex flex-col items-center justify-center py-12 text-center">
             <Zap className="mb-3 h-10 w-10 text-muted-foreground" />
             <p className="text-muted-foreground">
-              Nog geen budget rules voor deze klant
+              No budget rules yet for this client
             </p>
           </CardContent>
         </Card>
@@ -420,38 +420,38 @@ export function BudgetRulesManager({ client }: Props) {
                       <span className="font-medium text-foreground">{rule.name}</span>
                       {rule.is_active ? (
                         <span className="rounded-full bg-accent px-2 py-0.5 text-xs font-medium text-accent-foreground">
-                          Actief
+                          Active
                         </span>
                       ) : (
                         <span className="rounded-full bg-muted px-2 py-0.5 text-xs text-muted-foreground">
-                          Gepauzeerd
+                          Paused
                         </span>
                       )}
                     </div>
                     <p className="text-sm text-muted-foreground">
                       <TrendingUp className="mr-1 inline h-3.5 w-3.5" />
-                      {rule.target_type === "campaign" ? "Campagne" : "Ad Set"}:{" "}
+                      {rule.target_type === "campaign" ? "Campaign" : "Ad Set"}:{" "}
                       <span className="text-foreground">{rule.target_name || rule.campaign_id || rule.adset_id}</span>
                     </p>
                     <p className="text-sm text-muted-foreground">
-                      Als ROAS afgelopen {rule.lookback_days} dagen{" "}
+                      If ROAS over the past {rule.lookback_days} days is{" "}
                       <span className="text-foreground">{conditionLabel(rule.condition)} {rule.threshold}</span>
-                      {" → "}budget{" "}
-                      <span className="text-foreground">{actionLabel(rule.action)} met {rule.action_value}%</span>
+                      {" → "}
+                      <span className="text-foreground">{actionLabel(rule.action)} budget by {rule.action_value}%</span>
                     </p>
                     <div className="flex items-center gap-4 text-xs text-muted-foreground">
                       <span className="flex items-center gap-1">
                         <Clock className="h-3 w-3" />
-                        Elke {Math.round(rule.check_interval_minutes / 1440)} dag(en)
+                        Every {Math.round(rule.check_interval_minutes / 1440)} day(s)
                       </span>
                       {rule.last_checked_at && (
                         <span>
-                          Laatst gecheckt: {new Date(rule.last_checked_at).toLocaleString("nl-NL")}
+                          Last checked: {new Date(rule.last_checked_at).toLocaleString("en-US")}
                         </span>
                       )}
                       {rule.last_triggered_at && (
                         <span className="text-primary">
-                          Laatst getriggerd: {new Date(rule.last_triggered_at).toLocaleString("nl-NL")}
+                          Last triggered: {new Date(rule.last_triggered_at).toLocaleString("en-US")}
                         </span>
                       )}
                     </div>
@@ -465,7 +465,7 @@ export function BudgetRulesManager({ client }: Props) {
                       variant="ghost"
                       size="icon"
                       onClick={() => editRule(rule)}
-                      title="Wijzig rule"
+                      title="Edit rule"
                     >
                       <Pencil className="h-4 w-4 text-muted-foreground" />
                     </Button>
@@ -473,7 +473,7 @@ export function BudgetRulesManager({ client }: Props) {
                       variant="ghost"
                       size="icon"
                       onClick={() => duplicateRule(rule)}
-                      title="Dupliceer rule"
+                      title="Duplicate rule"
                     >
                       <Copy className="h-4 w-4 text-muted-foreground" />
                     </Button>

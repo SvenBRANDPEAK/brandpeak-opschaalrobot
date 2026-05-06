@@ -20,16 +20,16 @@ const Index = () => {
           </div>
           <div>
             <h1 className="text-lg font-semibold text-foreground">Meta Ads Manager</h1>
-            <p className="text-sm text-muted-foreground">Budget beheer & automatische regels</p>
+            <p className="text-sm text-muted-foreground">Budget management & automation rules</p>
           </div>
         </div>
       </header>
       <main className="container mx-auto px-6 py-8">
         <Tabs defaultValue="clients" className="space-y-6">
           <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="clients">Klanten</TabsTrigger>
+            <TabsTrigger value="clients">Clients</TabsTrigger>
             <TabsTrigger value="rules">Budget Rules</TabsTrigger>
-            <TabsTrigger value="manual">Handmatig</TabsTrigger>
+            <TabsTrigger value="manual">Manual</TabsTrigger>
           </TabsList>
 
           <TabsContent value="clients">
@@ -45,7 +45,7 @@ const Index = () => {
             ) : (
               <div className="rounded-lg border border-dashed border-border p-12 text-center">
                 <p className="text-muted-foreground">
-                  Selecteer eerst een klant in het tabblad "Klanten"
+                  Please select a client first in the "Clients" tab
                 </p>
               </div>
             )}

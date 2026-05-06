@@ -41,7 +41,7 @@ export function MetaBudgetManager() {
 
   const fetchCampaigns = async () => {
     if (!adAccountId.trim()) {
-      toast.error("Vul een Ad Account ID in");
+      toast.error("Please enter an Ad Account ID");
       return;
     }
     setLoading(true);
@@ -52,9 +52,9 @@ export function MetaBudgetManager() {
       if (error) throw error;
       if (data?.error) throw new Error(data.error);
       setCampaigns(data?.data || []);
-      toast.success(`${data?.data?.length || 0} campagnes gevonden`);
+      toast.success(`${data?.data?.length || 0} campaigns found`);
     } catch (err: any) {
-      toast.error(err.message || "Fout bij ophalen campagnes");
+      toast.error(err.message || "Failed to fetch campaigns");
     } finally {
       setLoading(false);
     }
@@ -62,7 +62,7 @@ export function MetaBudgetManager() {
 
   const fetchAdSets = async () => {
     if (!adAccountId.trim()) {
-      toast.error("Vul een Ad Account ID in");
+      toast.error("Please enter an Ad Account ID");
       return;
     }
     setLoading(true);
@@ -73,9 +73,9 @@ export function MetaBudgetManager() {
       if (error) throw error;
       if (data?.error) throw new Error(data.error);
       setAdSets(data?.data || []);
-      toast.success(`${data?.data?.length || 0} ad sets gevonden`);
+      toast.success(`${data?.data?.length || 0} ad sets found`);
     } catch (err: any) {
-      toast.error(err.message || "Fout bij ophalen ad sets");
+      toast.error(err.message || "Failed to fetch ad sets");
     } finally {
       setLoading(false);
     }
@@ -84,7 +84,7 @@ export function MetaBudgetManager() {
   const updateBudget = async (id: string, type: "campaign" | "adset") => {
     const newBudget = budgetInputs[id];
     if (!newBudget || isNaN(parseFloat(newBudget))) {
-      toast.error("Vul een geldig bedrag in");
+      toast.error("Please enter a valid amount");
       return;
     }
 
@@ -101,14 +101,14 @@ export function MetaBudgetManager() {
       if (error) throw error;
       if (data?.error) throw new Error(data.error);
 
-      toast.success("Budget succesvol bijgewerkt!");
+      toast.success("Budget updated successfully!");
       setBudgetInputs((prev) => ({ ...prev, [id]: "" }));
 
       // Refresh
       if (activeTab === "campaigns") fetchCampaigns();
       else fetchAdSets();
     } catch (err: any) {
-      toast.error(err.message || "Fout bij bijwerken budget");
+      toast.error(err.message || "Failed to update budget");
     } finally {
       setUpdatingId(null);
     }
@@ -135,7 +135,7 @@ export function MetaBudgetManager() {
             Ad Account
           </CardTitle>
           <CardDescription>
-            Vul je Meta Ad Account ID in (bijv. 123456789 of act_123456789)
+            Enter your Meta Ad Account ID (e.g. 123456789 or act_123456789)
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -147,7 +147,7 @@ export function MetaBudgetManager() {
               className="flex-1"
             />
             <Button onClick={handleLoad} disabled={loading}>
-              {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Laden"}
+              {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Load"}
             </Button>
           </div>
         </CardContent>
@@ -160,7 +160,7 @@ export function MetaBudgetManager() {
           onClick={() => setActiveTab("campaigns")}
           className="flex-1"
         >
-          Campagnes
+          Campaigns
         </Button>
         <Button
           variant={activeTab === "adsets" ? "default" : "secondary"}
@@ -184,12 +184,12 @@ export function MetaBudgetManager() {
                       <span className={statusColor(c.status)}>{c.status}</span>
                       <span className="flex items-center gap-1 text-muted-foreground">
                         <DollarSign className="h-3.5 w-3.5" />
-                        Dagbudget: {formatBudget(c.daily_budget)}
+                        Daily budget: {formatBudget(c.daily_budget)}
                       </span>
                       {c.budget_remaining && (
                         <span className="flex items-center gap-1 text-muted-foreground">
                           <TrendingUp className="h-3.5 w-3.5" />
-                          Resterend: {formatBudget(c.budget_remaining)}
+                          Remaining: {formatBudget(c.budget_remaining)}
                         </span>
                       )}
                     </div>
@@ -197,7 +197,7 @@ export function MetaBudgetManager() {
                   <div className="flex items-center gap-2">
                     <div className="space-y-1">
                       <Label htmlFor={`budget-${c.id}`} className="text-xs text-muted-foreground">
-                        Nieuw dagbudget (€)
+                        New daily budget (€)
                       </Label>
                       <Input
                         id={`budget-${c.id}`}
@@ -220,7 +220,7 @@ export function MetaBudgetManager() {
                       {updatingId === c.id ? (
                         <Loader2 className="h-4 w-4 animate-spin" />
                       ) : (
-                        "Opslaan"
+                        "Save"
                       )}
                     </Button>
                   </div>
@@ -243,14 +243,14 @@ export function MetaBudgetManager() {
                       <span className={statusColor(a.status)}>{a.status}</span>
                       <span className="flex items-center gap-1 text-muted-foreground">
                         <DollarSign className="h-3.5 w-3.5" />
-                        Dagbudget: {formatBudget(a.daily_budget)}
+                        Daily budget: {formatBudget(a.daily_budget)}
                       </span>
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
                     <div className="space-y-1">
                       <Label htmlFor={`budget-${a.id}`} className="text-xs text-muted-foreground">
-                        Nieuw dagbudget (€)
+                        New daily budget (€)
                       </Label>
                       <Input
                         id={`budget-${a.id}`}
@@ -273,7 +273,7 @@ export function MetaBudgetManager() {
                       {updatingId === a.id ? (
                         <Loader2 className="h-4 w-4 animate-spin" />
                       ) : (
-                        "Opslaan"
+                        "Save"
                       )}
                     </Button>
                   </div>
@@ -290,7 +290,7 @@ export function MetaBudgetManager() {
           <CardContent className="flex flex-col items-center justify-center py-12 text-center">
             <DollarSign className="mb-3 h-10 w-10 text-muted-foreground" />
             <p className="text-muted-foreground">
-              Vul je Ad Account ID in en klik op "Laden" om je campagnes te zien
+              Enter your Ad Account ID and click "Load" to view your campaigns
             </p>
           </CardContent>
         </Card>
@@ -301,7 +301,7 @@ export function MetaBudgetManager() {
           <CardContent className="flex flex-col items-center justify-center py-12 text-center">
             <DollarSign className="mb-3 h-10 w-10 text-muted-foreground" />
             <p className="text-muted-foreground">
-              Vul je Ad Account ID in en klik op "Laden" om je ad sets te zien
+              Enter your Ad Account ID and click "Load" to view your ad sets
             </p>
           </CardContent>
         </Card>
