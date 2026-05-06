@@ -47,7 +47,7 @@ export function RuleLogViewer({ ruleId }: { ruleId: string }) {
     <div className="mt-2">
       <Button variant="ghost" size="sm" onClick={toggle} className="h-7 px-2 text-xs text-muted-foreground">
         {open ? <ChevronUp className="mr-1 h-3 w-3" /> : <ChevronDown className="mr-1 h-3 w-3" />}
-        Logboek
+        Activity log
       </Button>
 
       {open && (
@@ -57,7 +57,7 @@ export function RuleLogViewer({ ruleId }: { ruleId: string }) {
               <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
             </div>
           ) : logs.length === 0 ? (
-            <p className="text-xs text-muted-foreground">Nog geen logs</p>
+            <p className="text-xs text-muted-foreground">No logs yet</p>
           ) : (
             <div className="space-y-2">
               {logs.map((log) => (
@@ -65,7 +65,7 @@ export function RuleLogViewer({ ruleId }: { ruleId: string }) {
                   {statusIcon(log.status)}
                   <div className="flex-1">
                     <span className="text-muted-foreground">
-                      {new Date(log.created_at).toLocaleString("nl-NL")}
+                      {new Date(log.created_at).toLocaleString("en-US")}
                     </span>
                     {" — "}
                     <span className="text-foreground">{log.message || log.status}</span>
