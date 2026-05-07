@@ -130,6 +130,7 @@ export function BudgetRulesManager({ client }: Props) {
       action: form.action,
       action_value: parseFloat(form.action_value),
       check_interval_minutes: parseInt(form.check_interval_days) * 1440,
+      max_daily_budget: form.max_daily_budget ? parseFloat(form.max_daily_budget) : null,
       is_active: true,
     };
 
