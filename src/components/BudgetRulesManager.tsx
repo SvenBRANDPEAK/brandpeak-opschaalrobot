@@ -173,6 +173,7 @@ export function BudgetRulesManager({ client }: Props) {
       action: "increase",
       action_value: "10",
       check_interval_days: "1",
+      max_daily_budget: "",
     });
   };
 
@@ -202,6 +203,7 @@ export function BudgetRulesManager({ client }: Props) {
       action: rule.action,
       action_value: String(rule.action_value),
       check_interval_days: String(Math.round(rule.check_interval_minutes / 1440) || 1),
+      max_daily_budget: rule.max_daily_budget ? String(rule.max_daily_budget) : "",
     });
     setShowForm(true);
     toast.info("Rule duplicated — please select a new campaign/ad set");
@@ -219,6 +221,7 @@ export function BudgetRulesManager({ client }: Props) {
       action: rule.action,
       action_value: String(rule.action_value),
       check_interval_days: String(Math.round(rule.check_interval_minutes / 1440) || 1),
+      max_daily_budget: rule.max_daily_budget ? String(rule.max_daily_budget) : "",
     });
     setShowForm(true);
   };
