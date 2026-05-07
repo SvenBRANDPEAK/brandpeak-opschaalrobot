@@ -60,6 +60,7 @@ export function BudgetRulesManager({ client }: Props) {
     action: "increase",
     action_value: "10",
     check_interval_days: "1",
+    max_daily_budget: "",
   });
 
   const fetchRules = async () => {
