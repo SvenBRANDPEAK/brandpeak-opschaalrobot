@@ -119,7 +119,26 @@ serve(async (req) => {
         const multiplier = rule.action === "increase"
           ? 1 + rule.action_value / 100
           : 1 - rule.action_value / 100;
-        const newBudget = Math.round(currentBudget * multiplier);
+        let newBudget = Math.round(currentBudget * multiplier);
+
+        // Enforce maximum daily budget cap (only for increases)
+        if (rule.action === "increase" && rule.max_daily_budget) {
+          const capCents = Math.round(rule.max_daily_budget * 100);
+          if (currentBudget >= capCents) {
+            await supabase.from("rule_logs").insert({
+              rule_id: rule.id,
+              status: "checked",
+              roas,
+              old_budget: currentBudget / 100,
+              message: `Daily budget cap of €${rule.max_daily_budget} already reached — no increase applied (ROAS: ${roas.toFixed(2)})`,
+            });
+            results.push({ rule_id: rule.id, status: "cap_reached", roas });
+            continue;
+          }
+          if (newBudget > capCents) {
+            newBudget = capCents;
+          }
+        }
 
         // Update budget via Meta API
         const updateParams = new URLSearchParams({
