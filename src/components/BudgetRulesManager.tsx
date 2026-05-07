@@ -460,6 +460,9 @@ export function BudgetRulesManager({ client }: Props) {
                       <span className="text-foreground">{conditionLabel(rule.condition)} {rule.threshold}</span>
                       {" → "}
                       <span className="text-foreground">{actionLabel(rule.action)} budget by {rule.action_value}%</span>
+                      {rule.max_daily_budget && rule.action === "increase" && (
+                        <> {" "}(cap: <span className="text-foreground">€{rule.max_daily_budget}</span>/day)</>
+                      )}
                     </p>
                     <div className="flex items-center gap-4 text-xs text-muted-foreground">
                       <span className="flex items-center gap-1">
