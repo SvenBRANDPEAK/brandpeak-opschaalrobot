@@ -26,6 +26,7 @@ type BudgetRule = {
   action: string;
   action_value: number;
   check_interval_minutes: number;
+  max_daily_budget: number | null;
   is_active: boolean;
   last_checked_at: string | null;
   last_triggered_at: string | null;
