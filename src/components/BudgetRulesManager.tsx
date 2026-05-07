@@ -389,6 +389,22 @@ export function BudgetRulesManager({ client }: Props) {
               />
             </div>
 
+            <div className="space-y-1">
+              <Label className="text-xs text-muted-foreground">
+                Maximum daily budget (€) — optional
+              </Label>
+              <Input
+                type="number"
+                step="0.01"
+                placeholder="No cap"
+                value={form.max_daily_budget}
+                onChange={(e) => setForm((f) => ({ ...f, max_daily_budget: e.target.value }))}
+              />
+              <p className="text-xs text-muted-foreground">
+                Increases stop once the daily budget reaches this cap.
+              </p>
+            </div>
+
             <div className="flex gap-2">
               <Button onClick={saveRule} disabled={saving}>
                 {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : editingRuleId ? "Update" : "Save rule"}
