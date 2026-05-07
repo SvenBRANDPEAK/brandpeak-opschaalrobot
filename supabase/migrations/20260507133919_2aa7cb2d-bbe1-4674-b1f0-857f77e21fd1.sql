@@ -1,0 +1,1 @@
+ALTER TABLE public.budget_rules ADD COLUMN max_daily_budget numeric;

@@ -26,6 +26,7 @@ type BudgetRule = {
   action: string;
   action_value: number;
   check_interval_minutes: number;
+  max_daily_budget: number | null;
   is_active: boolean;
   last_checked_at: string | null;
   last_triggered_at: string | null;
@@ -59,6 +60,7 @@ export function BudgetRulesManager({ client }: Props) {
     action: "increase",
     action_value: "10",
     check_interval_days: "1",
+    max_daily_budget: "",
   });
 
   const fetchRules = async () => {
@@ -128,6 +130,7 @@ export function BudgetRulesManager({ client }: Props) {
       action: form.action,
       action_value: parseFloat(form.action_value),
       check_interval_minutes: parseInt(form.check_interval_days) * 1440,
+      max_daily_budget: form.max_daily_budget ? parseFloat(form.max_daily_budget) : null,
       is_active: true,
     };
 
@@ -170,6 +173,7 @@ export function BudgetRulesManager({ client }: Props) {
       action: "increase",
       action_value: "10",
       check_interval_days: "1",
+      max_daily_budget: "",
     });
   };
 
@@ -199,6 +203,7 @@ export function BudgetRulesManager({ client }: Props) {
       action: rule.action,
       action_value: String(rule.action_value),
       check_interval_days: String(Math.round(rule.check_interval_minutes / 1440) || 1),
+      max_daily_budget: rule.max_daily_budget ? String(rule.max_daily_budget) : "",
     });
     setShowForm(true);
     toast.info("Rule duplicated — please select a new campaign/ad set");
@@ -216,6 +221,7 @@ export function BudgetRulesManager({ client }: Props) {
       action: rule.action,
       action_value: String(rule.action_value),
       check_interval_days: String(Math.round(rule.check_interval_minutes / 1440) || 1),
+      max_daily_budget: rule.max_daily_budget ? String(rule.max_daily_budget) : "",
     });
     setShowForm(true);
   };
@@ -383,6 +389,22 @@ export function BudgetRulesManager({ client }: Props) {
               />
             </div>
 
+            <div className="space-y-1">
+              <Label className="text-xs text-muted-foreground">
+                Maximum daily budget (€) — optional
+              </Label>
+              <Input
+                type="number"
+                step="0.01"
+                placeholder="No cap"
+                value={form.max_daily_budget}
+                onChange={(e) => setForm((f) => ({ ...f, max_daily_budget: e.target.value }))}
+              />
+              <p className="text-xs text-muted-foreground">
+                Increases stop once the daily budget reaches this cap.
+              </p>
+            </div>
+
             <div className="flex gap-2">
               <Button onClick={saveRule} disabled={saving}>
                 {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : editingRuleId ? "Update" : "Save rule"}
@@ -438,6 +460,9 @@ export function BudgetRulesManager({ client }: Props) {
                       <span className="text-foreground">{conditionLabel(rule.condition)} {rule.threshold}</span>
                       {" → "}
                       <span className="text-foreground">{actionLabel(rule.action)} budget by {rule.action_value}%</span>
+                      {rule.max_daily_budget && rule.action === "increase" && (
+                        <> {" "}(cap: <span className="text-foreground">€{rule.max_daily_budget}</span>/day)</>
+                      )}
                     </p>
                     <div className="flex items-center gap-4 text-xs text-muted-foreground">
                       <span className="flex items-center gap-1">

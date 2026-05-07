@@ -29,6 +29,7 @@ export type Database = {
           last_checked_at: string | null
           last_triggered_at: string | null
           lookback_days: number
+          max_daily_budget: number | null
           metric: string
           name: string
           target_name: string | null
@@ -49,6 +50,7 @@ export type Database = {
           last_checked_at?: string | null
           last_triggered_at?: string | null
           lookback_days?: number
+          max_daily_budget?: number | null
           metric?: string
           name: string
           target_name?: string | null
@@ -69,6 +71,7 @@ export type Database = {
           last_checked_at?: string | null
           last_triggered_at?: string | null
           lookback_days?: number
+          max_daily_budget?: number | null
           metric?: string
           name?: string
           target_name?: string | null
